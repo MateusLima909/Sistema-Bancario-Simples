@@ -42,5 +42,6 @@ Para executar a aplicação, certifique-se de ter o Java Development Kit (JDK) i
     ```bash
     java Main
     ```
-
+## 🔎 Observação: 
+Esta é a primeira versão do sistema. Pretendo expandi-lo no futuro com funcionalidades como gerenciamento de múltiplas contas, sistema de login e outras operações bancárias.
 ---
