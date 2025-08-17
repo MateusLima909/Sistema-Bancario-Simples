@@ -3,124 +3,82 @@ import java.util.InputMismatchException;
 
 public class Main {
 
-    private static String LINHA = "------------------------------";
+    private static final String LINHA = "------------------------------";
+
+    public static void exibirMenu() {
+        System.out.println("Bem vindo ao teste do seu Banco Inicial!");
+        System.out.println(LINHA);
+        System.out.println("1 - Consultar Saldo");
+        System.out.println("2 - Consultar Limite Cheque Especial");
+        System.out.println("3 - Status do Cheque Especial");
+        System.out.println("4 - Depositar Dinheiro");
+        System.out.println("5 - Sacar Dinheiro");
+        System.out.println("6 - Pagar Boleto");
+        System.out.println("7 - Sair");
+        System.out.println(LINHA);
+    }
+
+    private static int lerInteiro(Scanner scan, String mensagem) {
+        while (true) {
+            try {
+                System.out.print(mensagem);
+                int valor = scan.nextInt();
+                scan.nextLine(); 
+                return valor;
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada inválida. Digite um número inteiro.");
+                scan.nextLine(); 
+            }
+        }
+    }
+
+    private static double lerDouble(Scanner scan, String mensagem) {
+        while (true) {
+            try {
+                System.out.print(mensagem);
+                double valor = scan.nextDouble();
+                scan.nextLine(); 
+                return valor;
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada inválida. Digite um número decimal.");
+                scan.nextLine(); 
+            }
+        }
+    }
 
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         ContaBancaria conta1 = new ContaBancaria(1000.0);
 
-        int opcao = 0;
+        int opcao;
         do {
-            try {
-                System.out.println("Bem vindo ao teste do seu Banco Inicial!");
-                System.out.println(LINHA);
-                System.out.println("Escolha uma opção: ");
-                System.out.printf("1 - Consultar Saldo \n2 - Consultar Limite Cheque Especial \n3 - Status do Cheque Especial \n4 - Depositar Dinheiro \n5 - Sacar Dinheiro \n6 - Pagar Boleto\n7 - Sair \n");
-                System.out.println(LINHA);
-                System.out.print("Sua opção: ");
-                opcao = scan.nextInt();
-                System.out.println(LINHA);
+            exibirMenu();
+            opcao = lerInteiro(scan, "Escolha uma opção: ");
+            System.out.println(LINHA);
 
-                scan.nextLine();
-
-                switch (opcao) {
-
-                    case 1:
-                        conta1.consultarSaldo();
-                        break;
-                            
-                    case 2:
-                        conta1.consultarChequeEspecial();
-                        break;
-                            
-                    case 3:
-                        conta1.verificarChequeEspecial();
-                        break;
-                            
-                    case 4:
-                        boolean valorValido = false;
-                        do {
-                            try {
-                                System.out.print("Digite o valor a ser depositado: ");
-                                double valorDeposito = scan.nextDouble();
-                                if (valorDeposito > 0) {
-                                    conta1.depositar(valorDeposito);
-                                    scan.nextLine();
-                                    valorValido = true;
-                                } else {
-                                    System.out.println("Valor de depósito inválido! Tente novamente.");
-                                    scan.nextLine();
-                                }
-                            } catch (InputMismatchException e) {
-                                System.out.println("Entrada inválida! Por favor, insira um valor válido.");
-                                scan.nextLine();
-                            }
-                        } while (!valorValido);
-                        break;
-                            
-                    case 5:
-                        boolean saqueValido = false;
-                        do {
-                            try {
-                                System.out.print("Digite o valor a ser sacado: ");
-                                double valorSaque = scan.nextDouble();
-                                if (valorSaque > 0) {
-                                    conta1.sacarDinheiro(valorSaque);
-                                    saqueValido = true;
-                                    scan.nextLine();
-                                } else {
-                                    System.out.println("Valor de saque inválido ou insuficiente! Tente novamente.");
-                                    scan.nextLine();
-                                }
-                            } catch (InputMismatchException e) {
-                                System.out.println("Entrada inválida! Por favor, insira um valor válido.");
-                                scan.nextLine();
-                            }
-                        } while (!saqueValido);
-                        break;
-                            
-                    case 6:
-                        boolean boletoValido = false;
-                        do {
-                            try {
-                                System.out.print("Digite o valor do boleto: ");
-                                double valorBoleto = scan.nextDouble();
-                                if (valorBoleto > 0) {
-                                    conta1.pagarBoleto(valorBoleto);
-                                    scan.nextLine();
-                                    boletoValido = true;
-                                } else {
-                                    System.out.println("Valor de pagamento inválido ou insuficiente! Tente novamente.");
-                                    scan.nextLine();
-                                }
-                            } catch (InputMismatchException e) {
-                                System.out.println("Entrada inválida! Por favor, insira um valor válido.");
-                                scan.nextLine();
-                            }
-                        } while (!boletoValido);
-                        break;
-                            
-                    case 7:
-                        break;
-                            
-                    default:
-                        System.out.println("Opção inválida! Digite os números disponíveis no menu.");
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Entrada inválida! Por favor, insira um NÚMERO inteiro.");
-                scan.nextLine();
+            switch (opcao) {
+                case 1 -> conta1.consultarSaldo();
+                case 2 -> conta1.consultarChequeEspecial();
+                case 3 -> conta1.verificarChequeEspecial();
+                case 4 -> conta1.depositar(lerDouble(scan, "Valor do Depósito: "));
+                case 5 -> conta1.sacar(lerDouble(scan, "Valor do Saque: "));
+                case 6 -> conta1.pagarBoleto(lerDouble(scan, "Valor do boleto: "));
+                case 7 -> System.out.println("Sessão Finalizada!");
+                default -> System.out.println("Opção inválida! Digite os números disponíveis no menu.");
             }
 
             if (opcao != 7) {
                 System.out.println(LINHA);
                 System.out.println("\nAperte ENTER para continuar...");
                 scan.nextLine();
+                System.out.println(LINHA);
             }
 
         } while (opcao != 7);
 
+        System.out.println(LINHA);
         System.out.println("Fim da execução, obrigado por utilizar o programa!");
-        
+
         scan.close();
     }
 }
