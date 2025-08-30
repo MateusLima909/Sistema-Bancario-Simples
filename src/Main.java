@@ -1,84 +1,147 @@
 import java.util.Scanner;
-import java.util.InputMismatchException;
+
+import model.Cliente;
+import model.Conta;
+
+import service.ContaService;
 
 public class Main {
+  protected static String LINHA = "------------------------------";
 
-    private static final String LINHA = "------------------------------";
+  public static void exibirMenuInicial() {
+    System.out.println(LINHA);
+    System.out.println("Bem vindo ao teste do seu Banco versão 2.0!");
+    System.out.println(LINHA);
+    System.out.println("1 - Acessar Conta");
+    System.out.println("2 - Criar Conta Corrente"); 
+    System.out.println("3 - Criar Conta Poupança");
+    System.out.println("4 - Sair");
+    System.out.println(LINHA);
+  }
 
-    public static void exibirMenu() {
-        System.out.println("Bem vindo ao teste do seu Banco Inicial!");
+  private static int lerInteiro(Scanner scan, String mensagem) {
+    while(true) {
+      try {
+        System.out.printf(mensagem);
+        int valor = scan.nextInt(); 
+        scan.nextLine();
         System.out.println(LINHA);
-        System.out.println("1 - Consultar Saldo");
-        System.out.println("2 - Consultar Limite Cheque Especial");
-        System.out.println("3 - Status do Cheque Especial");
-        System.out.println("4 - Depositar Dinheiro");
-        System.out.println("5 - Sacar Dinheiro");
-        System.out.println("6 - Pagar Boleto");
-        System.out.println("7 - Sair");
+        return valor;
+      } catch (Exception e) {
         System.out.println(LINHA);
+        System.out.println("Entrada inválida. Digite um número inteiro.");
+        scan.nextLine();
+      }
+    }
+  }
+
+  private static double lerDouble(Scanner scan, String mensagem) {
+    while(true) {
+      try {
+        System.out.printf(mensagem);
+        double valor = scan.nextDouble(); 
+        scan.nextLine();
+        return valor;
+      } catch (Exception e) {
+        System.out.println(LINHA);
+        System.out.println("Entrada inválida. Digite um número decimal.");
+        scan.nextLine();
+      }
+    }
+  }
+
+  private static Cliente lerCLiente(Scanner scan) {
+    
+    System.out.printf("Digite seu nome: ");
+    String nome = scan.nextLine();
+    System.out.printf("Digite seu CPF: ");
+    String cpf = scan.nextLine();
+
+    Cliente novoCliente = new Cliente(nome, cpf);
+    return novoCliente;
+  }
+
+  private static void criarNovaConta(Scanner scan, ContaService bancoService, String tipoConta) {
+    Cliente novoCliente = lerCLiente(scan);
+    double saldoInicial = lerDouble(scan, "Digite o valor do depósito inicial: R$");
+
+    Conta contaCriada = null;
+    
+    if (tipoConta.equals("CORRENTE")) {
+      contaCriada = bancoService.criarContaCorrente(novoCliente, saldoInicial);
+    } else if (tipoConta.equals("POUPANCA")) {
+        contaCriada = bancoService.criarContaPoupanca(novoCliente, saldoInicial);
     }
 
-    private static int lerInteiro(Scanner scan, String mensagem) {
-        while (true) {
-            try {
-                System.out.print(mensagem);
-                int valor = scan.nextInt();
-                scan.nextLine(); 
-                return valor;
-            } catch (InputMismatchException e) {
-                System.out.println("Entrada inválida. Digite um número inteiro.");
-                scan.nextLine(); 
-            }
+    if (contaCriada != null) {
+      System.out.printf("\nConta %s criada com sucesso! \n", tipoConta.toLowerCase());
+      System.out.printf("Número da sua nova conta: %d \nPressione ENTER para continuar.\n", contaCriada.getNumero());
+      scan.nextLine();
+    } else {
+      System.out.println("Erro ao criar conta.");
+    }
+  }
+  
+  public static void main(String[] args) {
+    Scanner scan = new Scanner(System.in);
+    ContaService bancoService = new ContaService();
+    Conta contaAtiva = null;
+
+    int opcao = 0;
+    do {
+      if (contaAtiva == null) {
+        exibirMenuInicial();
+        opcao = lerInteiro(scan, "Escolha uma opção: ");
+      
+        switch (opcao) {
+          case 1: 
+            System.out.println("     --- LOGIN ---");
+            int numero = lerInteiro(scan, "Digite o número da Conta: ");
+            contaAtiva = bancoService.buscarPorNumero(numero);
+
+            if (contaAtiva == null) {
+              System.out.println("Conta não encontrada. Verifique o número e tente novamente. \nPressione ENTER para continuar.");
+            } else {
+              System.out.print("Digite seu CPF (apenas números): ");
+              String cpf = scan.nextLine();
+
+              contaAtiva = bancoService.realizarLogin(numero, cpf);
+              if (contaAtiva != null) {
+                System.out.println("Acesso realizado com sucesso! Pressione ENTER para continuar.");
+              } else {
+                System.out.println("Conta não encontrada. Verifique o número do seu CPF e tente novamente. \nPressione ENTER para continuar.");
+              }
+            } 
+            scan.nextLine();
+          break;
+            
+          case 2: 
+            System.out.println("--- CRIAR CONTA CORRENTE ---");
+            criarNovaConta(scan, bancoService, "CORRENTE");
+            
+          break;
+
+          case 3:
+            System.out.println("--- CRIAR CONTA POUPANÇA ---");
+            criarNovaConta(scan, bancoService, "POUPANCA");
+          break;
+            
+          case 4:
+            System.out.println("Obrigado por utilizar o Banco em Testes Iniciais!");
+          break;
+          default:
+            System.out.println("Opção Inválida! Tente Novamente.");
         }
-    }
+      } else {
+        contaAtiva.iniciarOperacoesMenu(scan, bancoService);
+        contaAtiva = null;
+      }
 
-    private static double lerDouble(Scanner scan, String mensagem) {
-        while (true) {
-            try {
-                System.out.print(mensagem);
-                double valor = scan.nextDouble();
-                scan.nextLine(); 
-                return valor;
-            } catch (InputMismatchException e) {
-                System.out.println("Entrada inválida. Digite um número decimal.");
-                scan.nextLine(); 
-            }
-        }
-    }
+    } while (opcao != 4);
 
-    public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
-        ContaBancaria conta1 = new ContaBancaria(1000.0);
-
-        int opcao;
-        do {
-            exibirMenu();
-            opcao = lerInteiro(scan, "Escolha uma opção: ");
-            System.out.println(LINHA);
-
-            switch (opcao) {
-                case 1 -> conta1.consultarSaldo();
-                case 2 -> conta1.consultarChequeEspecial();
-                case 3 -> conta1.verificarChequeEspecial();
-                case 4 -> conta1.depositar(lerDouble(scan, "Valor do Depósito: "));
-                case 5 -> conta1.sacar(lerDouble(scan, "Valor do Saque: "));
-                case 6 -> conta1.pagarBoleto(lerDouble(scan, "Valor do boleto: "));
-                case 7 -> System.out.println("Sessão Finalizada!");
-                default -> System.out.println("Opção inválida! Digite os números disponíveis no menu.");
-            }
-
-            if (opcao != 7) {
-                System.out.println(LINHA);
-                System.out.println("\nAperte ENTER para continuar...");
-                scan.nextLine();
-                System.out.println(LINHA);
-            }
-
-        } while (opcao != 7);
-
-        System.out.println(LINHA);
-        System.out.println("Fim da execução, obrigado por utilizar o programa!");
-
-        scan.close();
-    }
+    System.out.println(LINHA);
+    System.out.println("Fim da execução!");
+    
+    scan.close();
+  }
 }
