@@ -10,7 +10,7 @@
 
 ## 📝 Descrição
 
-Este projeto foi desenvolvido como parte do bootcamp **[NTT DATA - Java e IA Para Iniciantes]** da [Digital Innovation One (DIO)](https://www.dio.me/users/mateuslimasantos909). O objetivo central foi aplicar de forma prática os conceitos fundamentais da **Programação Orientada a Objetos (POO)** e de arquitetura de software, evoluindo de um script Java simples para uma aplicação de console robusta e bem estruturada que simula as operações de um banco digital.
+Este projeto foi desenvolvido como parte do bootcamp **NTT DATA - Java e IA Para Iniciantes** da [Digital Innovation One (DIO)](https://www.dio.me/users/mateuslimasantos909). O objetivo central foi aplicar de forma prática os conceitos fundamentais da **Programação Orientada a Objetos (POO)** e de arquitetura de software, evoluindo de um script Java simples para uma aplicação de console robusta e bem estruturada que simula as operações de um banco digital.
 
 A jornada de desenvolvimento partiu de uma única classe com lógica procedural e culminou em um sistema multi-camadas, demonstrando a importância do design de software na criação de aplicações escaláveis, coesas e de fácil manutenção.
 
