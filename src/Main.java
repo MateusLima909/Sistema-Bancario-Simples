@@ -127,7 +127,7 @@ public class Main {
           break;
             
           case 4:
-            System.out.println("Obrigado por utilizar o Banco em Testes Iniciais!");
+            System.out.println("Obrigado por utilizar o Banco em Testes Iniciais,!");
           break;
           default:
             System.out.println("Opção Inválida! Tente Novamente.");
